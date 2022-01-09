@@ -21,6 +21,9 @@ export const fetchSpecies = () =>
     .get(ApiEndpoint.Species)
     .then(response => response.data.results);
 
+export const fetchEntityByUrl = (url: string) =>
+  axiosInstance.get(url).then(response => response.data);
+
 export const fetchAllCharacters = (alreadyFetched = [], pageUrl?: string) => {
   return fetchCharacters(pageUrl).then(data => {
     const newFetched = alreadyFetched.concat(data.results);

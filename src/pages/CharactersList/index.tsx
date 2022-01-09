@@ -14,6 +14,8 @@ import Loader from '../../components/Loader';
 import useCharacters, {UpdateMode} from '../../hooks/useCharacters';
 import BottomSheet from '@gorhom/bottom-sheet';
 import FilterSheet, {FilterMode} from '../../components/FilterSheet';
+import {useNavigation} from '@react-navigation/native';
+import RouteName from '../../helpers/routeName';
 
 const CharactersList: React.FC = () => {
   const [filters, setFilters] = useState([]);
@@ -23,6 +25,8 @@ const CharactersList: React.FC = () => {
     useCharacters(filters, filterMode);
 
   const sheetRef = useRef<BottomSheet>(null);
+
+  const navigation = useNavigation<any>();
 
   const isLoading = updateMode === UpdateMode.Loading;
   const isLoadingMore = updateMode === UpdateMode.LoadingMore;
@@ -69,10 +73,15 @@ const CharactersList: React.FC = () => {
   );
 
   const renderCharacter = ({item: character}: {item: any}) => (
-    <CharacterButton>
-      <CharacterNameText>{character.name}</CharacterNameText>
+    <CharacterButton onPress={() => navigateToCharacterDetails(character)}>
+      <CharacterNameText numberOfLines={1} adjustsFontSizeToFit>
+        {character.name}
+      </CharacterNameText>
     </CharacterButton>
   );
+
+  const navigateToCharacterDetails = (character: any) =>
+    navigation.navigate(RouteName.CharacterDetails, {character});
 
   const renderFilterSheet = () => (
     <FilterSheet

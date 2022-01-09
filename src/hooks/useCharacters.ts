@@ -155,11 +155,9 @@ const useCharacters = (filters: any[], filterMode: FilterMode) => {
     updateFilteredCharacters();
   }, [updateFilteredCharacters]);
 
-  useFocusEffect(
-    useCallback(() => {
-      loadCharacters();
-    }, []),
-  );
+  useEffect(() => {
+    loadCharacters();
+  }, []);
 
   const loadCharacters = (pageUrl?: string) => {
     changeUpdateModeOnLoad(pageUrl);

@@ -58,8 +58,9 @@ const YearBornSection: React.FC<Props> = ({
 
   const renderBornFromInput = () => (
     <HorizontalContainer>
-      <InputLabel type="numeric">From:</InputLabel>
+      <InputLabel>From:</InputLabel>
       <StyledInput
+        keyboardType="numeric"
         placeholder="any"
         value={bornFrom}
         onChangeText={setBornFrom}
@@ -69,8 +70,13 @@ const YearBornSection: React.FC<Props> = ({
 
   const renderBornToInput = () => (
     <HorizontalContainer>
-      <InputLabel type="numeric">To:</InputLabel>
-      <StyledInput placeholder="any" value={bornTo} onChangeText={setBornTo} />
+      <InputLabel>To:</InputLabel>
+      <StyledInput
+        keyboardType="numeric"
+        placeholder="any"
+        value={bornTo}
+        onChangeText={setBornTo}
+      />
     </HorizontalContainer>
   );
 
