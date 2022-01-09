@@ -18,44 +18,69 @@ const useCharacters = (filters: any) => {
 
   const [filteredCharacters, setFilteredCharacters] = useState(characters);
 
+  const filterCharactersByFilms = (characters: any[], filter: any) => {
+    return characters.filter(character =>
+      character.films.some(film => filter.selected.includes(film)),
+    );
+  };
+
+  const filterCharactersBySpecies = (characters: any[], filter: any) => {
+    return characters.filter(character =>
+      character.species.some(species => filter.selected.includes(species)),
+    );
+  };
+
+  const filterCharactersByYearBorn = (characters: any[], filter: any) => {
+    const {from, to} = filter;
+    let filteredCharacters = [...characters];
+
+    if (from) {
+      filteredCharacters = filteredCharacters.filter(
+        character => Number(character.birth_year.replace('BBY', '')) >= from,
+      );
+    }
+
+    if (to) {
+      filteredCharacters = filteredCharacters.filter(
+        character => Number(character.birth_year.replace('BBY', '')) <= to,
+      );
+    }
+
+    return filteredCharacters;
+  };
+
+  const getFilteredCharacters = useCallback(async () => {
+    let filteredCharacters = await fetchAllCharacters();
+
+    filters.forEach(filter => {
+      switch (filter.type) {
+        case FilterType.Films:
+          filteredCharacters = filterCharactersByFilms(
+            filteredCharacters,
+            filter,
+          );
+        case FilterType.Species:
+          filteredCharacters = filterCharactersBySpecies(
+            filteredCharacters,
+            filter,
+          );
+        case FilterType.YearBorn:
+          filteredCharacters = filterCharactersByYearBorn(
+            filteredCharacters,
+            filter,
+          );
+      }
+    });
+
+    return filteredCharacters;
+  }, [filters]);
+
   const updateFilteredCharacters = useCallback(async () => {
     try {
       if (!filters.length) return setFilteredCharacters(characters);
 
       setUpdateMode(UpdateMode.LoadingAll);
-      let filteredCharacters = await fetchAllCharacters();
-
-      filters.forEach(filter => {
-        if (filter.type === FilterType.Films)
-          filteredCharacters = filteredCharacters.filter(character =>
-            character.films.some(film => filter.selected.includes(film)),
-          );
-
-        if (filter.type === FilterType.Species)
-          filteredCharacters = filteredCharacters.filter(character =>
-            character.species.some(species =>
-              filter.selected.includes(species),
-            ),
-          );
-
-        if (filter.type === FilterType.YearBorn) {
-          const {from, to} = filter;
-
-          if (from) {
-            filteredCharacters = filteredCharacters.filter(
-              character =>
-                Number(character.birth_year.replace('BBY', '')) >= from,
-            );
-          }
-
-          if (to) {
-            filteredCharacters = filteredCharacters.filter(
-              character =>
-                Number(character.birth_year.replace('BBY', '')) <= to,
-            );
-          }
-        }
-      });
+      const filteredCharacters = await getFilteredCharacters();
 
       setFilteredCharacters(filteredCharacters);
     } catch (error: any) {
@@ -63,7 +88,7 @@ const useCharacters = (filters: any) => {
     } finally {
       setUpdateMode(undefined);
     }
-  }, [filters, characters]);
+  }, [filters, characters, getFilteredCharacters]);
 
   useEffect(() => {
     updateFilteredCharacters();
