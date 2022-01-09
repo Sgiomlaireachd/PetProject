@@ -1,7 +1,7 @@
 import {useState, useCallback, useMemo, useEffect} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import {fetchAllCharacters, fetchCharacters} from '../axios';
-import {FilterType} from '../components/FilterSheet';
+import {FilterMode, FilterType} from '../components/FilterSheet';
 
 export enum UpdateMode {
   Loading = 'loading',
@@ -10,7 +10,7 @@ export enum UpdateMode {
   LoadingAll = 'LoadingAll',
 }
 
-const useCharacters = (filters: any) => {
+const useCharacters = (filters: any[], filterMode: FilterMode) => {
   const [data, setData] = useState();
   const [updateMode, setUpdateMode] = useState();
 
@@ -49,8 +49,11 @@ const useCharacters = (filters: any) => {
     return filteredCharacters;
   };
 
-  const getFilteredCharacters = useCallback(async () => {
-    let filteredCharacters = await fetchAllCharacters();
+  const getFilteredCharactersByAndMode = (
+    characters: any[],
+    filters: any[],
+  ) => {
+    let filteredCharacters = [...characters];
 
     filters.forEach(filter => {
       switch (filter.type) {
@@ -59,21 +62,79 @@ const useCharacters = (filters: any) => {
             filteredCharacters,
             filter,
           );
+          break;
         case FilterType.Species:
           filteredCharacters = filterCharactersBySpecies(
             filteredCharacters,
             filter,
           );
+          break;
         case FilterType.YearBorn:
           filteredCharacters = filterCharactersByYearBorn(
             filteredCharacters,
             filter,
           );
+          break;
       }
     });
 
     return filteredCharacters;
-  }, [filters]);
+  };
+
+  const getFilteredCharactersByOrMode = (characters: any[], filters: any[]) => {
+    let filteredByFilms = [];
+    let filteredBySpecies = [];
+    let filteredByYear = [];
+
+    filters.forEach(filter => {
+      switch (filter.type) {
+        case FilterType.Films:
+          filteredByFilms = filterCharactersByFilms(characters, filter);
+          break;
+        case FilterType.Species:
+          filteredBySpecies = filterCharactersBySpecies(characters, filter);
+          break;
+        case FilterType.YearBorn:
+          filteredByYear = filterCharactersByYearBorn(characters, filter);
+          break;
+      }
+    });
+
+    const uniqueCharacters = getUniqueCharacters([
+      ...filteredBySpecies,
+      ...filteredByFilms,
+      ...filteredByYear,
+    ]);
+
+    return uniqueCharacters;
+  };
+
+  const getUniqueCharacters = (characters: any[]) => {
+    const uniqueCharacters = [];
+
+    characters.forEach(character => {
+      const uniqueCharactersUrls = uniqueCharacters.map(
+        character => character.url,
+      );
+
+      if (!uniqueCharactersUrls.includes(character.url)) {
+        uniqueCharacters.push(character);
+      }
+    });
+
+    return uniqueCharacters;
+  };
+
+  const getFilteredCharacters = useCallback(async () => {
+    let filteredCharacters = await fetchAllCharacters();
+
+    switch (filterMode) {
+      case FilterMode.And:
+        return getFilteredCharactersByAndMode(filteredCharacters, filters);
+      case FilterMode.Or:
+        return getFilteredCharactersByOrMode(filteredCharacters, filters);
+    }
+  }, [filters, filterMode]);
 
   const updateFilteredCharacters = useCallback(async () => {
     try {

@@ -1,5 +1,5 @@
-import React, {useRef, useState, useEffect} from 'react';
-import {FlatList, View, RefreshControl} from 'react-native';
+import React, {useRef, useState} from 'react';
+import {View, RefreshControl} from 'react-native';
 import {
   CharacterButton,
   CharacterNameText,
@@ -7,17 +7,20 @@ import {
   EmptyStateText,
   FilterButton,
   FilterText,
+  LoaderContainer,
   StyledFlatList,
 } from './styled';
 import Loader from '../../components/Loader';
 import useCharacters, {UpdateMode} from '../../hooks/useCharacters';
 import BottomSheet from '@gorhom/bottom-sheet';
-import FilterSheet from '../../components/FilterSheet';
+import FilterSheet, {FilterMode} from '../../components/FilterSheet';
 
 const CharactersList: React.FC = () => {
   const [filters, setFilters] = useState([]);
+  const [filterMode, setFilterMode] = useState(FilterMode.And);
+
   const [characters, {updateMode, loadCharacters, loadMoreCharacters}] =
-    useCharacters(filters);
+    useCharacters(filters, filterMode);
 
   const sheetRef = useRef<BottomSheet>(null);
 
@@ -50,7 +53,11 @@ const CharactersList: React.FC = () => {
       />
     );
 
-  const renderLoader = () => <Loader />;
+  const renderLoader = () => (
+    <LoaderContainer>
+      <Loader />
+    </LoaderContainer>
+  );
 
   const renderLoadingMoreLoader = () =>
     isLoadingMore ? renderLoader() : <View />;
@@ -68,8 +75,18 @@ const CharactersList: React.FC = () => {
   );
 
   const renderFilterSheet = () => (
-    <FilterSheet ref={sheetRef} onApply={setFilters} />
+    <FilterSheet
+      ref={sheetRef}
+      filterMode={filterMode}
+      setFilterMode={setFilterMode}
+      onApply={onApplyFilters}
+    />
   );
+
+  const onApplyFilters = (filters: any[], filterMode: FilterMode) => {
+    setFilters(filters);
+    setFilterMode(filterMode);
+  };
 
   const renderFilterButton = () => (
     <FilterButton onPress={showFiltersSheet}>

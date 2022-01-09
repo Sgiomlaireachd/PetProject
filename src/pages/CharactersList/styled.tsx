@@ -47,6 +47,12 @@ export const FilterText = styled.Text`
   font-size: 18px;
 `;
 
+export const LoaderContainer = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;
+
 export const StyledFlatList = styled.FlatList.attrs(() => ({
   contentContainerStyle: {
     paddingTop: 5,
