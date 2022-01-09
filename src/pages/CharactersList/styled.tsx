@@ -12,6 +12,7 @@ export const EmptyStateText = styled.Text`
   text-align: center;
   align-self: center;
   padding: 0px 20px;
+  margin-top: 50px;
 `;
 
 export const CharacterButton = styled.TouchableOpacity`

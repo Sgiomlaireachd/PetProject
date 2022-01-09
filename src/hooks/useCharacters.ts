@@ -1,7 +1,7 @@
 import {useState, useCallback, useMemo, useEffect} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import {fetchAllCharacters, fetchCharacters} from '../axios';
-import {FilterType} from '../pages/CharactersList/components/FilterSheet';
+import {FilterType} from '../components/FilterSheet';
 
 export enum UpdateMode {
   Loading = 'loading',

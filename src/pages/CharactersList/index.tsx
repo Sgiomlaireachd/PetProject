@@ -12,7 +12,7 @@ import {
 import Loader from '../../components/Loader';
 import useCharacters, {UpdateMode} from '../../hooks/useCharacters';
 import BottomSheet from '@gorhom/bottom-sheet';
-import FilterSheet from './components/FilterSheet';
+import FilterSheet from '../../components/FilterSheet';
 
 const CharactersList: React.FC = () => {
   const [filters, setFilters] = useState([]);
@@ -40,7 +40,7 @@ const CharactersList: React.FC = () => {
     ) : (
       <StyledFlatList
         data={characters}
-        keyExtractor={item => item.name}
+        keyExtractor={item => item.url}
         renderItem={renderCharacter}
         ListEmptyComponent={isLoading ? renderLoader() : renderEmptyState}
         ListFooterComponent={renderLoadingMoreLoader}
