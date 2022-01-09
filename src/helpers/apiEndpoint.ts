@@ -1,6 +1,7 @@
 enum ApiEndpoint {
   People = 'people',
-  Films = 'films'
+  Films = 'films',
+  Species = 'species',
 }
 
 export default ApiEndpoint;

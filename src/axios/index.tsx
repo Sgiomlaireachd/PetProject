@@ -14,4 +14,18 @@ export const fetchCharacters = (pageUrl?: string) =>
     .then(response => response.data);
 
 export const fetchFilms = () =>
-  axiosInstance.get(ApiEndpoint.Films).then(response => response.data);
+  axiosInstance.get(ApiEndpoint.Films).then(response => response.data.results);
+
+export const fetchSpecies = () =>
+  axiosInstance
+    .get(ApiEndpoint.Species)
+    .then(response => response.data.results);
+
+export const fetchAllCharacters = (alreadyFetched = [], pageUrl?: string) => {
+  return fetchCharacters(pageUrl).then(data => {
+    const newFetched = alreadyFetched.concat(data.results);
+
+    if (data.next) return fetchAllCharacters(newFetched, data.next);
+    else return newFetched;
+  });
+};

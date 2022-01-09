@@ -3,6 +3,7 @@ import styled from 'styled-components/native';
 
 export const Container = styled.View`
   flex: 1;
+  padding-top: ${isIphoneX() ? 45 : 0}px;
 `;
 
 export const EmptyStateText = styled.Text`
@@ -12,13 +13,6 @@ export const EmptyStateText = styled.Text`
   align-self: center;
   padding: 0px 20px;
 `;
-
-export const StyledFlatList = styled.FlatList.attrs(() => ({
-  contentContainerStyle: {
-    paddingTop: isIphoneX() ? 45 : 0,
-    paddingBottom: isIphoneX() ? 15 : 0,
-  },
-}))``;
 
 export const CharacterButton = styled.TouchableOpacity`
   padding: 25px 15px;
@@ -34,3 +28,27 @@ export const CharacterNameText = styled.Text`
   font-size: 16px;
   font-weight: bold;
 `;
+
+export const FilterButton = styled.TouchableOpacity`
+  position: absolute;
+  bottom: ${isIphoneX() ? 50 : 30}px;
+  align-self: center;
+  padding: 10px 50px;
+  background-color: black;
+  box-shadow: 0px 0px 5px grey;
+  border-radius: 20px;
+`;
+
+export const FilterText = styled.Text`
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  font-size: 18px;
+`;
+
+export const StyledFlatList = styled.FlatList.attrs(() => ({
+  contentContainerStyle: {
+    paddingTop: 5,
+    paddingBottom: 10,
+  },
+}))``;
